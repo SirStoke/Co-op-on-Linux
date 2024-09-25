@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SOURCE=${BASH_SOURCE[0]}
 
@@ -159,7 +159,7 @@ if [ -n "$MULTIWINDOW" ]; then
         echo "default_border none 0" > "$DIR_CO_OP_SWAY/sway$i.conf"
         echo "output WL-1 resolution $(($(eval echo \$WIDTH$((i+1)))))x$(eval echo \$HEIGHT$((i+1)))" >> "$DIR_CO_OP_SWAY/sway$i.conf"
         echo "output X11-1 resolution $(($(eval echo \$WIDTH$((i+1)))))x$(eval echo \$HEIGHT$((i+1)))" >> "$DIR_CO_OP_SWAY/sway$i.conf"
-        exec_command="WAYLAND_DISPLAY=wayland-$i firejail --noprofile ${controller_firejail_args[$i]} '${GAMERUN}'"
+        exec_command="WAYLAND_DISPLAY=wayland-$i firejail --noprofile ${controller_firejail_args[$i]} ${GAMERUN}"
 
         "exec $exec_command" >> "$DIR_CO_OP_SWAY/sway$i.conf"
     done
@@ -201,7 +201,7 @@ elif [ -n "$WIDTH" ] && [ -n "$HEIGHT" ]; then
     for i in $(seq 0 $CONTROLLERS_NUM); do
         echo "default_border none 0" > $DIR_CO_OP_SWAY/sway$i.conf
         echo "output WL-1 resolution ${child_width}x${child_height}" >> $DIR_CO_OP_SWAY/sway$i.conf
-        exec_command="WAYLAND_DISPLAY=wayland-$i firejail --noprofile ${controller_firejail_args[$i]} '${GAMERUN}'"
+        exec_command="WAYLAND_DISPLAY=wayland-$i firejail --noprofile ${controller_firejail_args[$i]} ${GAMERUN}"
         echo "exec $exec_command" >> $DIR_CO_OP_SWAY/sway$i.conf
     done
 
@@ -230,6 +230,7 @@ elif [ -n "$WIDTH" ] && [ -n "$HEIGHT" ]; then
     else
         for i in $(seq 0 $(($CONTROLLERS_NUM - 1))); do
             echo "swaymsg exec \"sway -c $DIR_CO_OP_SWAY/sway$i.conf\"" >> $SPAWN_SCRIPT
+            echo "sleep 10 && rm -f /tmp/source_engine*" >> $SPAWN_SCRIPT
         done
     fi
 
